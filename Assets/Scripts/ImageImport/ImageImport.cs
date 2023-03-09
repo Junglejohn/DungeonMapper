@@ -4,7 +4,6 @@ using System.Linq;
 using B83.Win32;
 using UnityEngine.UI;
 
-
 public class ImageImport : MonoBehaviour
 {
     Texture2D texture = null;
@@ -73,9 +72,6 @@ public class ImageImport : MonoBehaviour
         // get the GUI rect of the last Label / box
         var rect = dropRectImage.rectTransform.rect;
 
-        //var rect = GUILayoutUtility.GetLastRect();
-        // check if the drop position is inside that rect
-
         var data = System.IO.File.ReadAllBytes(aInfo.file);
         var tex = new Texture2D(1, 1);
         tex.LoadImage(data);
@@ -83,7 +79,7 @@ public class ImageImport : MonoBehaviour
             Destroy(texture);
         texture = tex;
 
-        Debug.LogError("CreatingSpriteFromTexture");
+        //Creating sprite from imported texture
         dropRectImage.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f));
 
         dropRectTextAnim.SetBool("IsEmpty", true);

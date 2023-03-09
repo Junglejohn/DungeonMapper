@@ -11,6 +11,8 @@ public class playerFogOfWar : MonoBehaviour {
 
     private Image fogImage;
 
+    private int fogLayerIndex = 9;
+
 	public void CreateFog()
     {
         if (fogImage != null)
@@ -42,7 +44,7 @@ public class playerFogOfWar : MonoBehaviour {
         fogImage.rectTransform.sizeDelta = fogOfWar.fogImage.rectTransform.sizeDelta;
         fogImage.raycastTarget = false;
 
-        fogObject.layer = 9;
+        fogObject.layer = fogLayerIndex;
         
         UpdateFog(fogOfWar);
 

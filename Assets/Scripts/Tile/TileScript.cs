@@ -201,12 +201,9 @@ public class TileScript : MonoBehaviour {
 
             StartCoroutine(MoveImage());
 
-
-            //Position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //Position = new Vector2(  Input.mousePosition.x, Input.mousePosition.y);
         } else
         {
-            Debug.LogError("No Main camera is assigned. cannot move tile");
+            Debug.LogWarning("No Main camera is assigned. cannot move tile");
         }
 
     }
@@ -220,11 +217,14 @@ public class TileScript : MonoBehaviour {
 
         IsRunning = true;
 
+        Vector2 initialMousPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 posCorrection = new Vector2(initialMousPos.x - Position.x, initialMousPos.y - Position.y);
+
         while (Input.GetMouseButton(0))
         {
 
             //setting position moves gameobject
-            Position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Position = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition) - posCorrection;
             yield return null;
         }
 
@@ -270,8 +270,14 @@ public class TileScript : MonoBehaviour {
 
         IsRunning = true;
 
+        
+
         if (Camera.main != null)
         {
+
+            Vector2 initialMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 initialSize = new Vector2(Size.x, Size.y);
+
             while (IsRunning)
             {
                 if (Input.GetMouseButtonDown(1))
@@ -279,25 +285,19 @@ public class TileScript : MonoBehaviour {
                     IsRunning = false;
                 }
 
-                //gameObject.transform.position.x
+                Vector2 currentMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-                //Debug.Log(Input.mousePosition);
                 //setting Size scales tile
-                /*
-                Size = new Vector2(Mathf.Clamp(((
-                    Camera.main.ScreenToWorldPoint(Input.mousePosition).x - gameObject.transform.position.x)) * 2,
-                    5, 500),
-                    Mathf.Clamp(((gameObject.transform.position.y - Camera.main.ScreenToWorldPoint(Input.mousePosition).y) * 2),
-                    5, 500));
-                */
-
-                Size = new Vector2(( Camera.main.ScreenToWorldPoint(Input.mousePosition).x - gameObject.transform.position.x) *2, gameObject.transform.position.y - Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
+                Size = new Vector2(
+                    initialSize.x + (currentMousePos.x - initialMousePos.x) * Camera.main.aspect,
+                    initialSize.y - (currentMousePos.y - initialMousePos.y)*2
+                    );
 
                 yield return null;
             }
         } else
         {
-            Debug.LogError("No main camera in scene. Scale tile function aborted");
+            Debug.LogWarning("No main camera in scene. Scale tile function aborted");
         }
 
 
@@ -331,8 +331,6 @@ public class TileScript : MonoBehaviour {
                     IsRunning = false;
                 }
 
-                //gameObject.transform.position.x
-
                 Debug.Log(Input.mousePosition);
                
                 //setting Angle Rotates tile
@@ -345,7 +343,7 @@ public class TileScript : MonoBehaviour {
             }
         } else
         {
-            Debug.LogError("No main camera in scene Rotate tile function aborted");
+            Debug.LogWarning("No main camera in scene Rotate tile function aborted");
         }
 
 

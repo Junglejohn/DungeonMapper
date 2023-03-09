@@ -29,31 +29,11 @@ public class Manager : MonoBehaviour {
 
         EventManager.IsForegroundActive = true;
 
-        //session.OnLoaded += SessionLoadedRefresh;
-        
-
         session.LoadSession();
 
         EventManager.OnSessionRefresh(session);
 
-        //session.OnSaved += SessionLoadedRefresh;
-        //session.SaveSession();
-
-        //EventManager.IsForegroundActive = true;
 
     }
 
-    /*
-
-    void SessionLoadedRefresh()
-    {
-        if (EventManager.OnSessionRefresh != null)
-        {
-            EventManager.OnSessionRefresh.Invoke(session);
-        }
-    }
-
-    */
-
-    
 }

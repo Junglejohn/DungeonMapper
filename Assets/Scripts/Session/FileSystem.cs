@@ -171,6 +171,10 @@ public static class FileSystem {
 public class SessionData
 {
     public string Name;
+
+    public float DimensionX;
+    public float DimensionY;
+
     public List<LoadSpriteData> backgroundDataList = new List<LoadSpriteData>();
     public List<LoadSpriteData> LoadSpriteDataList = new List<LoadSpriteData>();
     
@@ -179,6 +183,9 @@ public class SessionData
     public void PopulateSessionData(Session session)
     {
         Name = session.Name;
+
+        DimensionX = session.SessionDimensions.x;
+        DimensionY = session.SessionDimensions.y;
 
         fogOfWarData = new FogOfWarData(session.fogOfWar);
 
@@ -216,6 +223,8 @@ public class SessionData
     public Session ConvertToSession()
     {
         Session currentSession = new Session(Name);
+
+        currentSession.SessionDimensions = new Vector2(DimensionX, DimensionY);
 
         currentSession.fogOfWar = fogOfWarData.ConvertToFogOfWar();
 

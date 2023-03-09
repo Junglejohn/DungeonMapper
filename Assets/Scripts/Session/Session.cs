@@ -67,13 +67,7 @@ public class Session {
         }
     }
 
-    public string ImageDataPath
-    {
-        get
-        {
-            return DataPath + "/Images";
-        }
-    }
+    public Vector2 SessionDimensions = new Vector2(2500,2000);
 
     public LoadSprite backgroundImg;
     
@@ -169,35 +163,6 @@ public class Session {
         
     }
 
-    // BackgroundLoadSprites
-
-        /*
-    public bool AddBackgroundLoadSprite(string Name, Sprite sprite)
-    {
-        if (!string.IsNullOrEmpty(Name) && sprite != null)
-        {
-            LoadSprite s = new LoadSprite();
-            s.Name = Name;
-            s.sprite = sprite;
-            s.size = new Vector2(sprite.rect.width, sprite.rect.height);
-
-            BackgroundLoadSpriteList.Add(s);
-
-            SaveSession();
-
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-
-
-
-    }
-    */
-
-
     public bool DeleteBackgroundLoadSprite(LoadSprite currentLoadSprite)
     {
         if (currentLoadSprite != null && BackgroundLoadSpriteList.Contains(currentLoadSprite))
@@ -258,55 +223,6 @@ public class Session {
         
     }
 
-    //LoadSessionSave each image as separate file code
-    /*
-     
-            //load each sprite for each loadSprite
-            foreach (LoadSprite spriteInfo in LoadSpriteList)
-            {
-                byte[] bytes;
-                try
-                {
-                    bytes = System.IO.File.ReadAllBytes(ImageDataPath + "/" + spriteInfo.storageName);
-                    Texture2D tex = new Texture2D(1, 1);
-                    tex.LoadImage(bytes);
-
-                    spriteInfo.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
-
-                    Debug.Log("Loaded file from: " + ImageDataPath + "/" + spriteInfo.storageName);
-                }
-                catch
-                {
-
-                    LoadSpriteList.Remove(spriteInfo);
-                    Debug.LogError("Could not load file from: " + ImageDataPath + "/" + spriteInfo.storageName);
-                }
-
-            }
-
-            foreach (LoadSprite spriteInfo in BackgroundLoadSpriteList)
-            {
-                byte[] bytes;
-                try
-                {
-                    bytes = System.IO.File.ReadAllBytes(ImageDataPath + "/" + spriteInfo.storageName);
-                    Texture2D tex = new Texture2D(1, 1);
-                    tex.LoadImage(bytes);
-
-                    spriteInfo.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
-
-                    Debug.Log("Loaded file from: " + ImageDataPath + "/" + spriteInfo.storageName);
-                }
-                catch
-                {
-
-                    LoadSpriteList.Remove(spriteInfo);
-                    Debug.LogError("Could not load file from: " + ImageDataPath + "/" + spriteInfo.storageName);
-                }
-
-            }
-
-    */
     public bool LoadSession()
     {
         string path = SessionFilePath;
@@ -335,7 +251,7 @@ public class Session {
                 OnLoaded.Invoke();
             }
 
-            Debug.LogError("Session named: " + Name + " is finished loading at path: " + path);
+            Debug.Log("Session named: " + Name + " is finished loading at path: " + path);
             return true;
         }
         else
@@ -405,70 +321,6 @@ public class Session {
 
     }
     
-    /*
-    public void LoadSession()
-    {
-        Session s = FileSystem.LoadSession(Name);
-
-        if (s != null)
-        {
-            backgroundImg = s.backgroundImg;
-            TileCreatorTileInfoList = s.TileCreatorTileInfoList;
-            tileInfoList = s.tileInfoList;
-
-            LoadAllSprites();
-            Debug.Log("Session was found. loaded data");
-        } else
-        {
-            Debug.Log("No Session was found. Starting with no data");
-        }
-        
-    }
-    
-    public void AddTile(LoadSprite s)
-    {
-        if (s != null)
-        {
-            tileInfoList.Add(s);
-        }
-        
-    }
-
-    public void AddTileCreatorTile(LoadSprite s)
-    {
-        if (s != null)
-        {
-            TileCreatorTileInfoList.Add(s);
-        }
-
-    }
-
-    public void ChangeBackground(LoadSprite s)
-    {
-        if (s != null)
-        {
-            TileCreatorTileInfoList.Add(s);
-        }
-
-    }
-
-    void LoadAllSprites()
-    {
-        backgroundImg.LoadAsset(Name);
-
-        foreach (LoadSprite s in tileInfoList)
-        {
-            s.LoadAsset(Name);
-        }
-
-        foreach (LoadSprite s in TileCreatorTileInfoList)
-        {
-            s.LoadAsset(Name);
-        }
-    }
-
-    */
-
 }
 
 [System.Serializable]

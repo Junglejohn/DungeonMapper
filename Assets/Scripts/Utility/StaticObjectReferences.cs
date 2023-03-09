@@ -15,7 +15,6 @@ public class StaticObjectReferences : MonoBehaviour {
         }
     }
 
-
     [SerializeField]
     Transform _TileParent;
     public Transform TileParent { get { return _TileParent; } }
@@ -32,9 +31,5 @@ public class StaticObjectReferences : MonoBehaviour {
     [SerializeField]
     TileCreatorTileScript _TileCreatorPrefab;
     public TileCreatorTileScript TileCreatorPrefab { get { return _TileCreatorPrefab; } }
-
-    //public Image backgroundImage;
-
-    
 
 }

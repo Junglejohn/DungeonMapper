@@ -52,9 +52,6 @@ public class GameManager : MonoBehaviour {
 
         SceneManager.LoadScene(1);
 
-        
-
-
     }
 
     int p = 0;
@@ -81,6 +78,7 @@ public class GameManager : MonoBehaviour {
         p = 0;
 
         SceneManager.sceneLoaded -= SceneLoaded;
+
     }
 
     public const string MenuSceneName = "MenuScene";
@@ -93,7 +91,7 @@ public class GameManager : MonoBehaviour {
             Destroy(currentGameManager.gameObject);
         }
 
-
         SceneManager.LoadScene(MenuSceneName);
+
     }
 }

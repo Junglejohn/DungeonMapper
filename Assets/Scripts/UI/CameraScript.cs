@@ -14,9 +14,9 @@ public class CameraScript : MonoBehaviour {
     private Vector2 _cameraPos;
     public Vector2 CameraPos { get { return _cameraPos; } set {
 
-            float camHalfWidth = (((cam.orthographicSize) * cam.aspect) / 2);
+            float camHalfWidth = cam.orthographicSize * cam.aspect;
 
-            float horizontal =Mathf.Clamp((StaticVariables.AreaWidth / 2) - camHalfWidth, 0, StaticVariables.AreaWidth/2);
+            float horizontal =Mathf.Clamp((StaticVariables.AreaWidth / 2) - camHalfWidth, -(StaticVariables.AreaWidth / 2) + camHalfWidth, StaticVariables.AreaWidth/2 - camHalfWidth);
             float vertical = Mathf.Clamp( (StaticVariables.AreaHeight / 2) - (cam.orthographicSize),0, StaticVariables.AreaHeight/2);
 
             _cameraPos = new Vector2(
@@ -98,25 +98,24 @@ public class CameraScript : MonoBehaviour {
 
 
 
-        Vector2 mousePos = Input.mousePosition;
+        Vector2 storedMousePos = cam.ScreenToWorldPoint(Input.mousePosition);
         while (IsRunning && Input.GetMouseButton(0) && EventManager.IsCanvasControllable && !TileScript.IsRunning)
         {
+            //the current Mouse Position for this frame
+            Vector2 currentMousePos = cam.ScreenToWorldPoint(Input.mousePosition);
 
-            //Debug.Log("mousePos " + mousePos.x + ", currentPos " + Input.mousePosition.x);
-            
             CameraPos = new Vector2(
-                cam.transform.position.x - (Input.mousePosition.x - mousePos.x),
-                cam.transform.position.y - (Input.mousePosition.y - mousePos.y)
+                cam.transform.position.x - (currentMousePos.x - storedMousePos.x),
+                cam.transform.position.y - (currentMousePos.y - storedMousePos.y)
                 );
 
             //Debug.Log(cam.orthographicSize + "cam halfwidth is: " + camHalfWidth + " camerapos is: " + CameraPos);
 
-            mousePos = Input.mousePosition;
+            //the MousePos From PreviousFrame - used to get the equivalent of deltaMousePosition but in world space since we are moving a physical cam
+            storedMousePos = cam.ScreenToWorldPoint(Input.mousePosition);
 
             yield return null;
         }
-
-        //Debug.Log(" Moving screen");
 
         IsRunning = false;
     }
