@@ -163,8 +163,8 @@ public class SessionData
     {
         Name = session.Name;
 
-        DimensionX = session.SessionDimensions.x;
-        DimensionY = session.SessionDimensions.y;
+        DimensionX = session.AreaSize.x;
+        DimensionY = session.AreaSize.y;
 
         fogOfWarData = new FogOfWarData(session.fogOfWar);
 
@@ -189,7 +189,7 @@ public class SessionData
     {
         Session currentSession = new Session(Name);
 
-        currentSession.SessionDimensions = new Vector2(DimensionX, DimensionY);
+        currentSession.AreaSize = new Vector2(DimensionX, DimensionY);
 
         currentSession.fogOfWar = fogOfWarData.ConvertToFogOfWar();
 

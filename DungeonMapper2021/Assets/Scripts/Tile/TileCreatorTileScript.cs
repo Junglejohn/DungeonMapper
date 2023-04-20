@@ -65,8 +65,6 @@ public class TileCreatorTileScript : MonoBehaviour {
 
         currentloadSprite = loadSprite;
 
-
-
     }
 
     public void CreateTile()
@@ -77,65 +75,6 @@ public class TileCreatorTileScript : MonoBehaviour {
 
             Debug.Log("creating tile for the loadsprite called " + Name);
         }
-
-        /*
-        if (StaticObjectReferences.currentReferences.TilePrefab != null)
-        {
-            
-            if (currentloadSprite != null )
-            {
-                LoadTile loadTile = new LoadTile();
-                loadTile.loadSpriteInfo = currentloadSprite;
-                currentloadSprite.AddLoadTile(loadTile);
-
-                Debug.Log("Creating Tile");
-                GameObject tile = Instantiate(StaticObjectReferences.currentReferences.TilePrefab.gameObject, StaticObjectReferences.currentReferences.TileParent, false) as GameObject;
-                
-             
-                TileScript tileScript = tile.gameObject.GetComponent<TileScript>();
-                
-                tileScript.InitializeTile(loadTile);
-                tileScript.Position = new Vector2(Screen.width/2, Screen.height/2);
-                
-            } else
-            {
-                Debug.LogError("Creating Tile, but no LoadSprite is assigned - This tile will not be saved");
-                GameObject tile = Instantiate(StaticObjectReferences.currentReferences.TilePrefab.gameObject, StaticObjectReferences.currentReferences.TileParent, false) as GameObject;
-                tile.gameObject.GetComponent<TileScript>().InitializeTile(Name, image.sprite);
-            }
-        }
-
-        */
-    }
-    
-    public void RefreshTiles()
-    {
-        if (currentloadSprite != null)
-        {
-            foreach (LoadTile tile in currentloadSprite.LoadTileList)
-            {
-                if (tile.OnTileObjectsDeleted != null)
-                {
-                    tile.OnTileObjectsDeleted.Invoke();
-                }
-            }
-
-            foreach (LoadTile loadTile in currentloadSprite.LoadTileList)
-            {
-                Debug.Log("Creating Tile");
-                GameObject tile = Instantiate(StaticObjectReferences.currentReferences.TilePrefab.gameObject, StaticObjectReferences.currentReferences.TileParent, false) as GameObject;
-                TileScript tileScript = tile.gameObject.GetComponent<TileScript>();
-
-                //tileScript.currentLoadTile.loadSpriteInfo
-                tileScript.InitializeTile(loadTile);
-                
-            }
-
-        } else
-        {
-            Debug.LogError("No loadsprite assigned. Cannot refresh tiles");
-        }
-
     }
 
     public void DeleteTileCreator()

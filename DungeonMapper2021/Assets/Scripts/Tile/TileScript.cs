@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class TileScript : MonoBehaviour {
 
@@ -55,7 +56,7 @@ public class TileScript : MonoBehaviour {
                 if (currentLoadTile != null && currentLoadTile.loadSpriteInfo != null && currentLoadTile.loadSpriteInfo.sprite != null)
                 {
                     _xSpriteAspectRatio = currentLoadTile.loadSpriteInfo.sprite.texture.width / (float)currentLoadTile.loadSpriteInfo.sprite.texture.height;
-                    Debug.Log("Loadtile name: " + currentLoadTile.loadSpriteInfo.Name+ "texture width: " + currentLoadTile.loadSpriteInfo.sprite.texture.width + ". texture height: "+ currentLoadTile.loadSpriteInfo.sprite.texture.height + ". Aspect: " + _xSpriteAspectRatio);
+                    //Debug.Log("Loadtile name: " + currentLoadTile.loadSpriteInfo.Name+ "texture width: " + currentLoadTile.loadSpriteInfo.sprite.texture.width + ". texture height: "+ currentLoadTile.loadSpriteInfo.sprite.texture.height + ". Aspect: " + _xSpriteAspectRatio);
 
                     _aspectAssigned = true;
                     return XSpriteAspectRatio;
@@ -90,7 +91,7 @@ public class TileScript : MonoBehaviour {
 
             Vector2 clampedValue = new Vector2(Mathf.Clamp(value.x, minSize, maxSize * XSpriteAspectRatio), Mathf.Clamp(value.y, minSize, maxSize));
 
-            Debug.Log("maxSizeX = " + maxSize * XSpriteAspectRatio + ". clampedValue.x = " + clampedValue.x);
+            //Debug.Log("maxSizeX = " + maxSize * XSpriteAspectRatio + ". clampedValue.x = " + clampedValue.x);
 
             if (currentLoadTile != null)
             {
@@ -139,7 +140,21 @@ public class TileScript : MonoBehaviour {
             }
         }
     }
-    public Text NameText;
+    public TMP_Text NameText;
+    public GameObject nameFrame;
+
+    public void setShowName(bool isShow)
+    {
+        if (nameFrame != null)
+        {
+            nameFrame.SetActive(isShow);
+        }
+
+        if (NameText != null)
+        {
+            NameText.enabled = isShow;
+        }
+    }
 
     private Sprite _sprite;
     public Sprite sprite
@@ -156,7 +171,6 @@ public class TileScript : MonoBehaviour {
     }
     public Image image;
 
-    
     public Button MenuButton;
     public Button ScaleButton;
     public Button RotateButton;
@@ -217,6 +231,7 @@ public class TileScript : MonoBehaviour {
             MaxHealth = loadTile.MaxHealth;
             CurrentHealth = loadTile.Health;
 
+            OrderInLayer = loadTile.orderInLayer;
 
         } else
         {
@@ -233,6 +248,24 @@ public class TileScript : MonoBehaviour {
     {
         Name = TileName;
         sprite = TileSprite;
+
+        IsShowHealthBar = false;
+        MaxHealth = 100;
+        CurrentHealth = 100;
+
+        setShowName(false);
+    }
+
+    public void ActivateEditing(bool isActivate)
+    {
+        if (isActivate)
+        {
+            StartCoroutine(Editing());
+        }
+        else
+        {
+            IsRunningEditing = false;
+        }
     }
 
     private bool IsRunningEditing = false;
@@ -245,6 +278,8 @@ public class TileScript : MonoBehaviour {
 
         IsRunningEditing = true;
 
+        setShowName(true);
+
         SetEditorButtonsActivation(true);
 
 
@@ -253,6 +288,20 @@ public class TileScript : MonoBehaviour {
 
             yield return null;
 
+            if (Input.GetButtonDown(StaticVariables.MoveButtonName))
+            {
+                EndShowAllHelpText();
+                MoveTile();
+            } else if (Input.GetButtonDown(StaticVariables.ScaleButtonName))
+            {
+                EndShowAllHelpText();
+                ScaleTile();
+            } else if(Input.GetButtonDown(StaticVariables.RotateButtonName))
+            {
+                EndShowAllHelpText();
+                RotateTile();
+            }
+
             if (IsRunning)
             {
                 SetEditorButtonsActivation(false);
@@ -260,13 +309,9 @@ public class TileScript : MonoBehaviour {
                 SetEditorButtonsActivation(true);
             }
 
-            if (Input.GetButtonDown("Cancel"))
-            {
-                IsRunningEditing = false;
-            }
-
-            
         }
+
+        setShowName(false);
 
         SetEditorButtonsActivation(false);
 
@@ -300,9 +345,8 @@ public class TileScript : MonoBehaviour {
         Vector2 initialMousPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 posCorrection = new Vector2(initialMousPos.x - Position.x, initialMousPos.y - Position.y);
 
-        while (Input.GetMouseButton(0))
+        while (Input.GetMouseButton(0) || Input.GetButton(StaticVariables.MoveButtonName))
         {
-
             //setting position moves gameobject
             Position = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition) - posCorrection;
             yield return null;
@@ -350,7 +394,8 @@ public class TileScript : MonoBehaviour {
 
         IsRunning = true;
 
-        
+        ShowHelpText(5);
+        ShowHelpText(6);
 
         if (Camera.main != null)
         {
@@ -368,10 +413,24 @@ public class TileScript : MonoBehaviour {
                 Vector2 currentMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
                 //setting Size scales tile
-                Size = new Vector2(
+                if (Input.GetButton(StaticVariables.IncrementButtonName) && sprite != null)
+                {
+                    //Debug.Log("Scale, Keep Aspect");
+
+                    Size = new Vector2(
                     initialSize.x + (currentMousePos.x - initialMousePos.x) * Camera.main.aspect,
-                    initialSize.y - (currentMousePos.y - initialMousePos.y)*2
+                    initialSize.x + (currentMousePos.x - initialMousePos.x) * Camera.main.aspect * (sprite.rect.height / sprite.rect.width)
                     );
+                } else
+                {
+                    //Debug.Log("Scale, Free Aspect");
+                    Size = new Vector2(
+                    initialSize.x + (currentMousePos.x - initialMousePos.x) * Camera.main.aspect,
+                    initialSize.y - (currentMousePos.y - initialMousePos.y) * 2
+                    );
+                }
+
+                
 
                 yield return null;
             }
@@ -380,6 +439,8 @@ public class TileScript : MonoBehaviour {
             Debug.LogWarning("No main camera in scene. Scale tile function aborted");
         }
 
+        EndShowHelpText(5);
+        EndShowHelpText(6);
 
 
         IsRunning = false;
@@ -389,7 +450,8 @@ public class TileScript : MonoBehaviour {
     {
         StartCoroutine(RotateImage());
     }
-    
+
+    private int incrementAngle = 15;
     private IEnumerator RotateImage()
     {
         if (IsRunning)
@@ -398,6 +460,10 @@ public class TileScript : MonoBehaviour {
         }
 
         IsRunning = true;
+
+        ShowHelpText(2);
+        ShowHelpText(3);
+
 
         if (Camera.main != null)
         {
@@ -412,12 +478,19 @@ public class TileScript : MonoBehaviour {
                 }
 
                 Debug.Log(Input.mousePosition);
-               
-                //setting Angle Rotates tile
-                Angle = startAngle - (int)Vector2.SignedAngle(
+
+                int currentAngle = startAngle - (int)Vector2.SignedAngle(
                     Input.mousePosition - Camera.main.WorldToScreenPoint(gameObject.transform.position),
                     mousePos - Camera.main.WorldToScreenPoint(gameObject.transform.position)
                     );
+
+                if (Input.GetButton(StaticVariables.IncrementButtonName))
+                {
+                    currentAngle = Mathf.RoundToInt(currentAngle / incrementAngle) * incrementAngle;
+                }
+
+                //setting Angle Rotates tile
+                Angle = currentAngle;
 
                 yield return null;
             }
@@ -426,18 +499,13 @@ public class TileScript : MonoBehaviour {
             Debug.LogWarning("No main camera in scene Rotate tile function aborted");
         }
 
+        EndShowHelpText(2);
+        EndShowHelpText(3);
 
 
         IsRunning = false;
     }
     
-    public void ShowName()
-    {
-
-        NameText.enabled = true ;
-
-        SetEditorButtonsActivation(true);
-    }
 
     bool isRunningEditorStartListener = false;
     private IEnumerator EditorStartListener()
@@ -463,14 +531,6 @@ public class TileScript : MonoBehaviour {
         }
 
         isRunningEditorStartListener = false;
-    }
-
-    public void HideName()
-    {
-        NameText.enabled = false;
-
-        SetEditorButtonsActivation(false);
-
     }
 
     public void DeleteTileObject()
@@ -589,7 +649,7 @@ public class TileScript : MonoBehaviour {
         }
     }
 
-    bool InputFieldAssignedCheck(InputField currentInputField)
+    bool InputFieldAssignedCheck(TMP_InputField currentInputField)
     {
         if (currentInputField != null && currentInputField.text != null)
         {
@@ -601,7 +661,7 @@ public class TileScript : MonoBehaviour {
         }
     }
 
-    void AssignInputFieldValue(InputField currentInputField, int currentValue)
+    void AssignInputFieldValue(TMP_InputField currentInputField, int currentValue)
     {
         if (InputFieldAssignedCheck(currentInputField))
         {
@@ -633,7 +693,7 @@ public class TileScript : MonoBehaviour {
             SetHealthBarSliderColor();
         }
     }
-    public InputField maxHealthInputField;
+    public TMP_InputField maxHealthInputField;
     public void OnMaxHealthInputFieldEndEdit()
     {
         if (InputFieldAssignedCheck(maxHealthInputField))
@@ -665,7 +725,8 @@ public class TileScript : MonoBehaviour {
             SetHealthBarSliderColor();
         }
     }
-    public InputField currentHealthInputField;
+    //public InputField currentHealthInputField;
+    public TMP_InputField currentHealthInputField;
 
     public void OncurrentHealthInputFieldEndEdit()
     {
@@ -742,10 +803,57 @@ public class TileScript : MonoBehaviour {
         isShowFrame = !isShowFrame;
     }
 
-    //PushTileToFront
+
+
+
+    //Order of tiles (needs rework)
+    public int OrderInLayer
+    {
+        get { return transform.GetSiblingIndex(); }
+        set
+        {
+            transform.SetSiblingIndex(value);
+
+            if (currentLoadTile != null)
+            {
+                currentLoadTile.orderInLayer = value;
+            }
+
+        }
+    }
+
     public void PushToFront()
     {
         transform.SetAsLastSibling();
+        OrderInLayer = transform.GetSiblingIndex();
+    }
+
+    //Help Text
+    public HelpTextArray currentHelpTextArray;
+
+
+    public void ShowHelpText(int index)
+    {
+        if (currentHelpTextArray != null)
+        {
+            currentHelpTextArray.ShowHelp(index);
+        }
+    }
+
+    public void EndShowHelpText(int index)
+    {
+        if (currentHelpTextArray != null)
+        {
+            currentHelpTextArray.EndShowHelp(index);
+        }
+    }
+
+    public void EndShowAllHelpText()
+    {
+        if (currentHelpTextArray != null)
+        {
+            currentHelpTextArray.EndShowAllHelp();
+        }
     }
 
 }

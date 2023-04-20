@@ -11,9 +11,10 @@ public class AllowCanvasControl : MonoBehaviour {
 
     public void RefreshTiles()
     {
-        if (EventManager.OnSessionRefresh != null && Manager.currentManager != null && Manager.currentManager.session != null)
+
+        if (EventManager.OnSessionRefresh != null && StaticVariables.currentSession != null)
         {
-            EventManager.OnSessionRefresh.Invoke(Manager.currentManager.session);
+            EventManager.OnSessionRefresh.Invoke(StaticVariables.currentSession);
         } else
         {
             Debug.LogError("null reference - No session to refresh");

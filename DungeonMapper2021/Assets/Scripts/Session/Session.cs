@@ -8,7 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 [System.Serializable]
 public class Session {
 
-    public enum SessionUseState { empty, tilesAdded, inUse}
+    public enum SessionUseState { empty, tilesAdded, inUse }
 
     public SessionUseState InUseCheck()
     {
@@ -18,7 +18,7 @@ public class Session {
         }
 
 
-        foreach (LoadSprite sprite in LoadSpriteList )
+        foreach (LoadSprite sprite in LoadSpriteList)
         {
             if (sprite.LoadTileList.Count > 0)
             {
@@ -41,8 +41,20 @@ public class Session {
     public delegate void SessionEvent();
     public SessionEvent OnSaved;
     public SessionEvent OnLoaded;
-    
+
     public string Name = "Session01";
+
+    public static bool isNameValid(string currentName){
+
+        if (!string.IsNullOrEmpty(currentName))
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
+        
+    }
 
     private const string SaveFileTypeName = ".troll";
 
@@ -67,7 +79,7 @@ public class Session {
         }
     }
 
-    public Vector2 SessionDimensions = new Vector2(2500,2000);
+    public Vector2 AreaSize = new Vector2(2500,2000);
 
     public LoadSprite backgroundImg;
     
@@ -394,6 +406,7 @@ public class LoadTile
     public LoadTileEvent OnDeleted;
     public LoadTileEvent OnTileObjectsDeleted;
 
+    [SerializeReference]
     public LoadSprite loadSpriteInfo;
     
     public Vector2 pos;
@@ -409,11 +422,14 @@ public class LoadTile
 
     }
 
+    public int orderInLayer;
+
+
     public int Angle;
 
     public bool isHealthBarShown;
-    public int MaxHealth;
-    public int Health;
+    public int MaxHealth = 100;
+    public int Health = 100;
 
 
 }

@@ -10,12 +10,11 @@ public class TileMenuCanvasScript : MonoBehaviour {
     {
         if (IsSaveOnExit)
         {
-            Manager.currentManager.session.SaveSession();
+            StaticVariables.SaveCurrentSession();
+            Debug.Log("TODO: recurring code - make new script for this and assign");
         }
 
-
         SceneManager.LoadScene(GameManager.MenuSceneName);
-
 
     }
 
@@ -23,15 +22,12 @@ public class TileMenuCanvasScript : MonoBehaviour {
     {
         EventManager.OnSessionRefresh += RefreshTileCreatorButtons;
         
-        //EventManager.OnIsForegroundActivation += SetRefreshTileCreatorButtonsWithCurrentSessionData;
-
     }
 
     public void OnDisable()
     {
         EventManager.OnSessionRefresh -= RefreshTileCreatorButtons;
-        //EventManager.on
-        //EventManager.OnIsForegroundActivation -= SetRefreshTileCreatorButtonsWithCurrentSessionData;
+
     }
     
     public void ToggleWindowedMode()
@@ -95,9 +91,9 @@ public class TileMenuCanvasScript : MonoBehaviour {
 
     public void SetRefreshTileCreatorButtonsWithCurrentSessionData()
     {
-        if (Manager.currentManager != null && Manager.currentManager.session != null)
+        if (StaticVariables.currentSession != null)
         {
-            RefreshTileCreatorButtons(Manager.currentManager.session);
+            RefreshTileCreatorButtons(StaticVariables.currentSession);
         } else
         {
             Debug.Log("tileMenu not updated. No Manager and no Session is assigned. tileMenu cannot use this data to update tiles");
@@ -105,9 +101,6 @@ public class TileMenuCanvasScript : MonoBehaviour {
 
         
     }
-
-
-
 
     void ResetTileCreatorButtons()
     {
@@ -124,9 +117,8 @@ public class TileMenuCanvasScript : MonoBehaviour {
 
     public void Save()
     {
-        if (Manager.currentManager != null && Manager.currentManager.session != null) {
-            Manager.currentManager.session.SaveSession();
-        } 
+        StaticVariables.SaveCurrentSession();
+        Debug.Log("TODO: recurring code - make new script for this and assign");
     }
 
     public Animator menuAnim;

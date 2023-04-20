@@ -137,7 +137,7 @@ public class ImageImport : MonoBehaviour
 
     public void AddTileIcon()
     {
-        if (Manager.currentManager != null && Manager.currentManager.session.AddLoadSprite(namingInputField.text, dropRectImage.sprite, EventManager.IsForegroundActive))
+        if (StaticVariables.currentSession.AddLoadSprite(namingInputField.text, dropRectImage.sprite, EventManager.IsForegroundActive))
         {
             Debug.LogError("Added sprite by the name of " + namingInputField.text);
 

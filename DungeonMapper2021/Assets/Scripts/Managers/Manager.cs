@@ -6,7 +6,7 @@ public class Manager : MonoBehaviour {
 
     public static Manager currentManager;
 
-    public Session session;
+    //public Session session;
 
     private void Awake()
     {
@@ -25,14 +25,21 @@ public class Manager : MonoBehaviour {
 
     public void StartSession(Session currentSession)
     {
-        session = currentSession;
+
+        currentSession.LoadSession();
+
+        StaticVariables.currentSession = currentSession;
+
+        //session = currentSession;
 
         EventManager.IsForegroundActive = true;
 
-        session.LoadSession();
+        
+        /*
+        StaticVariables.AreaSize = session.AreaSize;
 
         EventManager.OnSessionRefresh(session);
-
+        */
 
     }
 

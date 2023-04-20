@@ -15,9 +15,9 @@ public class FogOfWarCanvas : MonoBehaviour {
     private Sprite _sprite;
     public Sprite sprite { get {
 
-            if (Manager.currentManager != null && Manager.currentManager.session != null)
+            if (StaticVariables.currentSession != null)
             {
-                return Manager.currentManager.session.fogOfWar.sprite;
+                return StaticVariables.currentSession.fogOfWar.sprite;
             } else
             {
                 return _sprite;
@@ -25,10 +25,9 @@ public class FogOfWarCanvas : MonoBehaviour {
         }
         set {
 
-            if (Manager.currentManager != null && Manager.currentManager.session != null)
+            if (StaticVariables.currentSession != null)
             {
-
-                Manager.currentManager.session.fogOfWar.sprite = value;
+                StaticVariables.currentSession.fogOfWar.sprite = value;
             }
 
             _sprite = value;
@@ -54,9 +53,9 @@ public class FogOfWarCanvas : MonoBehaviour {
 
 
             _isShowFog = value;
-            if (Manager.currentManager != null && Manager.currentManager.session.fogOfWar != null)
+            if (StaticVariables.currentSession.fogOfWar != null)
             {
-                Manager.currentManager.session.fogOfWar.IsShown = value;
+                StaticVariables.currentSession.fogOfWar.IsShown = value;
             }
 
             if (fogImage != null)
@@ -94,6 +93,38 @@ public class FogOfWarCanvas : MonoBehaviour {
         IsPaintReveal = !IsPaintReveal;
     }
 
+    public void FillFogArea(bool isHiddenColor)
+    {
+
+        if (sprite == null)
+        {
+            Debug.Log("No sprite is assigned or generated for fog of war. Cannot fill the area");
+
+            return;
+        }
+
+        Color[] colors = new Color[(sprite.texture.width) * (sprite.texture.height)];
+
+        //choose color
+        Color currentColor = revealedColor;
+        if (isHiddenColor)
+        {
+            currentColor = hiddenColor;
+        }
+        
+        //assign color to pixels
+        for (int i = 0; i < colors.Length; ++i)
+        {
+            colors[i] = currentColor;
+        }
+
+        //assign pixels to texture
+        sprite.texture.SetPixels(colors);
+
+        //make texture show new pixels
+        sprite.texture.Apply();
+    }
+
     public Color currentColor { get
         {
             if (IsPaintReveal)
@@ -111,7 +142,7 @@ public class FogOfWarCanvas : MonoBehaviour {
     void Awake()
     {
 
-        //subscribe to brushes being changed
+        //subscribe to brushes being changed.
         EventManager.OnBrushAssigned += AssignBrush;
 
         //figure out a camera to use for editing fog. The assigned Camera if able, otherwise try the main camera.
@@ -130,8 +161,6 @@ public class FogOfWarCanvas : MonoBehaviour {
         EventManager.OnSessionRefresh += CreateFog;
         
     }
-
-    
 
     public Texture2D brushImage;
     public void AssignBrush(Texture2D newBrushTexture)
@@ -247,6 +276,13 @@ public class FogOfWarCanvas : MonoBehaviour {
     
     public void CreateFog(Session currentSession)
     {
+
+        if (currentSession == null)
+        {
+            Debug.Log("No Session assigned. Could not create fog of war");
+
+            return;
+        }
         
         if (currentSession.fogOfWar == null)
         {
@@ -255,28 +291,27 @@ public class FogOfWarCanvas : MonoBehaviour {
         
         Texture2D texture = new Texture2D(1, 1);
 
-        if (currentSession.fogOfWar.sprite == null)
+        //if the current session not already have generated a fog texture to load, then generate one
+        if (currentSession.fogOfWar.sprite == null) 
         {
-            texture = new Texture2D((int)StaticVariables.AreaWidth, (int)StaticVariables.AreaHeight);
+            texture = new Texture2D((int)currentSession.AreaSize.x, (int)currentSession.AreaSize.y);
 
             Color[] colors = new Color[(texture.width) * (texture.height)];
 
-            for (var i = 0; i < colors.Length; ++i)
+            for (int i = 0; i < colors.Length; ++i)
             {
                 colors[i] = hiddenColor;
             }
 
             texture.SetPixels(colors);
 
-            sprite = Sprite.Create(texture, new Rect(new Vector2(0, 0), new Vector2((int)StaticVariables.AreaWidth, (int)StaticVariables.AreaHeight)), new Vector2(0.5f, 0.5f), 1);
+            sprite = Sprite.Create(texture, new Rect(new Vector2(0, 0), new Vector2((int)currentSession.AreaSize.x, (int)currentSession.AreaSize.y)), new Vector2(0.5f, 0.5f), 1);
 
             fogImage.sprite = sprite;
             
-            fogImage.rectTransform.sizeDelta = new Vector2((int)StaticVariables.AreaWidth, (int)StaticVariables.AreaHeight);
+            fogImage.rectTransform.sizeDelta = new Vector2((int)currentSession.AreaSize.x, (int)currentSession.AreaSize.y);
 
-            //spriteRend.sprite = sprite;
-
-            Debug.Log("Created sprite. Size is: " + sprite.rect);
+            Debug.LogError("Created sprite. Size is: " + sprite.rect);
 
             texture.Apply();
 
@@ -285,13 +320,56 @@ public class FogOfWarCanvas : MonoBehaviour {
         } else
         {
 
-            sprite = Sprite.Create(sprite.texture, new Rect(new Vector2(0, 0), new Vector2(sprite.texture.width, sprite.texture.height)), new Vector2(0.5f, 0.5f), 1);
+            //if session area was resized. Fog of war needs to be resized to fit. 'Trim excess'/'add extra fog' pixels of image but keep fog in the same place
+            if(currentSession.fogOfWar.sprite.texture.width != (int)currentSession.AreaSize.x || currentSession.fogOfWar.sprite.texture.height != (int)currentSession.AreaSize.y)
+            {
+                Debug.LogError("fog of war was adjusted to fit area size. Size of Area: " + currentSession.AreaSize);
 
-            //spriteRend.sprite = sprite;
+                texture = new Texture2D((int)currentSession.AreaSize.x, (int)currentSession.AreaSize.y);
+
+                Color[] colors = new Color[(int)currentSession.AreaSize.x * (int)currentSession.AreaSize.y];
+
+
+                int differenceX = (int)currentSession.AreaSize.x - currentSession.fogOfWar.sprite.texture.width;
+                int differenceY = (int)currentSession.AreaSize.y - currentSession.fogOfWar.sprite.texture.height;
+
+                int pixelShiftX = differenceX / 2;
+                int pixelShiftY = differenceY / 2;
+
+
+                for (int y = 0; y < (int)currentSession.AreaSize.y; y++)
+                {
+                    for (int x = 0; x < (int)currentSession.AreaSize.x; x++)
+                    {
+                        if (x >= pixelShiftX && y >= pixelShiftY && x < (int)currentSession.AreaSize.x - pixelShiftX && y < (int)currentSession.AreaSize.y - pixelShiftY)
+                        {
+                            colors[(int)currentSession.AreaSize.x * y + x] = currentSession.fogOfWar.sprite.texture.GetPixel(x - pixelShiftX, y - pixelShiftY);
+                        }
+                        else
+                        {
+                            //if Area size is larger than the fog of war sprite resolution fill in the remainder with 'hidden color'
+                            colors[(int)currentSession.AreaSize.x * y + x] = hiddenColor;
+                        }
+                    }
+                }
+
+                texture.SetPixels(colors);
+
+                sprite = Sprite.Create(texture, new Rect(new Vector2(0, 0), new Vector2((int)currentSession.AreaSize.x, (int)currentSession.AreaSize.y)), new Vector2(0.5f, 0.5f), 1);
+
+                
+
+            } else //if fog was not resized just use the fog of war image from the current session
+            {
+                Debug.LogError("fog of war not adjusted. Size of Area: " + currentSession.AreaSize + ". Sprite size is: " + new Vector2(currentSession.fogOfWar.sprite.texture.width, currentSession.fogOfWar.sprite.texture.height));
+
+                sprite = Sprite.Create(sprite.texture, new Rect(new Vector2(0, 0), new Vector2(sprite.texture.width, sprite.texture.height)), new Vector2(0.5f, 0.5f), 1);
+
+            }
 
             fogImage.sprite = sprite;
 
-            fogImage.rectTransform.sizeDelta = new Vector2((int)StaticVariables.AreaWidth, (int)StaticVariables.AreaHeight);
+            fogImage.rectTransform.sizeDelta = new Vector2((int)currentSession.AreaSize.x, (int)currentSession.AreaSize.y);
 
             Debug.Log("Loaded sprite from session: "+currentSession.Name+". Size is: " + sprite.rect);
 
@@ -299,8 +377,6 @@ public class FogOfWarCanvas : MonoBehaviour {
 
             SetFogVisibility(currentSession.fogOfWar.IsShown);
         }
-
-        //gameObject.AddComponent<BoxCollider2D>();
 
         if (OnFogValueChanged != null)
         {

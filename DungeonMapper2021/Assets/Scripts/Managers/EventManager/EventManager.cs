@@ -14,6 +14,12 @@ public static class EventManager {
     public static SessionEvent OnSessionDeleted;
     public static SessionEvent OnSessionAdded;
 
+    public delegate void SessionNameEvent(string name);
+    public static SessionNameEvent OnSessionNameUpdate;
+
+    public delegate void backgroundSizeEvent(Vector2 size);
+    public static backgroundSizeEvent OnBackgroundSizeChanged;
+
     public delegate void SessionListEvent(string[] sessionList);
     public static SessionListEvent OnSessionListUpdate;
 

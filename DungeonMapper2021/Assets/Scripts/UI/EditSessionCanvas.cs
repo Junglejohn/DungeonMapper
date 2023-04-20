@@ -8,20 +8,23 @@ public class EditSessionCanvas : MonoBehaviour {
     public CanvasActivation canvasActivation;
     public int returnCanvasIndex;
 
-    public InputField nameTextInput;
+    public UISessionNameInputField nameInput;
 
-	public void CreateSession()
+    public UIAreaSizeInputFields AreaSizeInput;
+
+
+    public void CreateSession()
     {
 
-        if (nameTextInput != null)
+        if (nameInput != null)
         {
-            if (!string.IsNullOrEmpty(nameTextInput.text))
+            if (Session.isNameValid(nameInput.GetNameFromInputField()))
             {
-                Session session = new Session(nameTextInput.text);
+                Session session = new Session(nameInput.GetNameFromInputField());
+
+                session.AreaSize = AreaSizeInput.GetCurrentAreaSizeFromInputFields();
+
                 session.SaveSession();
-
-
-                nameTextInput.text = "";
 
                 if (EventManager.OnSessionListUpdate != null)
                 {
@@ -33,13 +36,10 @@ public class EditSessionCanvas : MonoBehaviour {
             }
             else
             {
-                nameTextInput.Select();
+                nameInput.nameInputField.Select();
 
                 Debug.Log("no valid name was typed");
             }
-
-
-
 
         }
         else
@@ -50,6 +50,33 @@ public class EditSessionCanvas : MonoBehaviour {
 
     }
 
+    public void AssignCurrentSessionChanges()
+    {
+        AssignCurrentAreaSize();
+        AssignCurrentSessionName();
+
+        if (EventManager.OnSessionRefresh != null && StaticVariables.currentSession != null)
+        {
+            EventManager.OnSessionRefresh.Invoke(StaticVariables.currentSession);
+        }
+
+    }
+
+    public void AssignCurrentAreaSize()
+    {
+        //changing StaticVariables.AreaSize automatically invokes the EventManager.OnBackgroundSizeChanged
+        StaticVariables.AreaSize = AreaSizeInput.GetCurrentAreaSizeFromInputFields();
+
+    }
+
+    public void AssignCurrentSessionName()
+    {
+        //changing StaticVariables.currentSessionName automatically invokes the EventManager.OnNameChanged
+        StaticVariables.currentSessionName = nameInput.GetNameFromInputField();
+
+    }
+
+
     public void backToReturnCanvas()
     {
         if (canvasActivation != null)
@@ -57,4 +84,6 @@ public class EditSessionCanvas : MonoBehaviour {
             canvasActivation.ActivateSingleCanvasByIndex(returnCanvasIndex);
         }
     }
+
+
 }
