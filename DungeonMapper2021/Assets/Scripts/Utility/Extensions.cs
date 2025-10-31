@@ -5,7 +5,7 @@ using UnityEditor;
 
 public static class Extensions 
 {
-
+    /*
     public static bool isObjectPrefab(this Object currentObject)
     {
         if (PrefabUtility.GetPrefabAssetType(currentObject) == PrefabAssetType.NotAPrefab)
@@ -16,4 +16,6 @@ public static class Extensions
             return true;
         }
     }
+    */
+
 }

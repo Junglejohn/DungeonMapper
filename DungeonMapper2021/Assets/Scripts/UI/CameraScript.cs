@@ -41,7 +41,7 @@ public class CameraScript : MonoBehaviour {
 
     public int camMinSize = 50;
     [SerializeField]
-    private int _camMaxSize = 1250;
+    private int _camMaxSize = 3000;
     public int camMaxSize { get { return getClampedCameraMaxSize(_camMaxSize); } set {
             _camMaxSize = getClampedCameraMaxSize(value);
         } 

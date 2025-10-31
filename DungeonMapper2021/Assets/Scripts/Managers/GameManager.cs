@@ -54,16 +54,10 @@ public class GameManager : MonoBehaviour {
 
     }
 
-    int p = 0;
     void SceneLoaded(Scene s, LoadSceneMode mode)
     {
         if (session != null)
         {
-
-            p++;
-
-            //Debug.Log("p is " + p);
-
             Manager manager = FindObjectOfType<Manager>();
             if (manager != null)
             {
@@ -74,8 +68,6 @@ public class GameManager : MonoBehaviour {
                 Debug.Log("No Manager was found could not start session");
             }
         }
-
-        p = 0;
 
         SceneManager.sceneLoaded -= SceneLoaded;
 

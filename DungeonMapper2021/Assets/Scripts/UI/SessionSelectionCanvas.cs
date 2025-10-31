@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SessionSelectionCanvas : MonoBehaviour {
+public class SessionSelectionCanvas : CanvasScript {
 
     // Use this for initialization
     private void OnEnable()

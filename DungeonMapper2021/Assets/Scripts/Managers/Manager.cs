@@ -6,8 +6,6 @@ public class Manager : MonoBehaviour {
 
     public static Manager currentManager;
 
-    //public Session session;
-
     private void Awake()
     {
         if (currentManager != null)
@@ -30,16 +28,7 @@ public class Manager : MonoBehaviour {
 
         StaticVariables.currentSession = currentSession;
 
-        //session = currentSession;
-
         EventManager.IsForegroundActive = true;
-
-        
-        /*
-        StaticVariables.AreaSize = session.AreaSize;
-
-        EventManager.OnSessionRefresh(session);
-        */
 
     }
 

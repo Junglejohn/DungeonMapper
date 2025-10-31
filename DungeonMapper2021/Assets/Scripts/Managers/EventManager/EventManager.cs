@@ -55,7 +55,7 @@ public static class EventManager {
     }
 
     public static bool IsCanvasControllable = true;
-
+    public static bool IsEditingTile = false;
 
     //tiles
     public delegate void TileInteractionStateEvent(TileScript.TileInteractionState State);

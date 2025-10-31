@@ -6,16 +6,15 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 public static class FileSystem {
 
-    
     public static List<Session> GetAllSessions()
     {
         List<Session> sessionList = new List<Session>();
 
-        Session tempSession = new Session("none");
+        //Session tempSession = new Session("none");
 
-        string path = tempSession.SessionFolderDataPath;
+        string path = Session.SessionFolderDataPath;
 
-        DirectoryInfo di = new DirectoryInfo(tempSession.SessionFolderDataPath);
+        DirectoryInfo di = new DirectoryInfo(path);
         try
         {
             if (di.Exists)
@@ -72,11 +71,9 @@ public static class FileSystem {
     {
         List<string> sessionNameList = new List<string>();
 
-        Session tempSession = new Session("none");
+        string path = Session.SessionFolderDataPath;
 
-        string path = tempSession.SessionFolderDataPath;
-
-        DirectoryInfo di = new DirectoryInfo(tempSession.SessionFolderDataPath);
+        DirectoryInfo di = new DirectoryInfo(path);
         try
         {
             if (di.Exists)
@@ -166,6 +163,8 @@ public class SessionData
         DimensionX = session.AreaSize.x;
         DimensionY = session.AreaSize.y;
 
+        Debug.Log("PopulateSessionData - name of session [" + session.Name + "] Name of data [" + Name + "]. Session Area [" + session.AreaSize + "] DimensionXY [" + DimensionX + "," + DimensionY + "]");
+
         fogOfWarData = new FogOfWarData(session.fogOfWar);
 
         foreach (LoadSprite loadSprite in session.BackgroundLoadSpriteList)
@@ -225,6 +224,9 @@ public class SessionData
     
     public void PopulateSessionWithData(Session currentSession)
     {
+
+        currentSession.AreaSize = new Vector2(DimensionX, DimensionY);
+
         if (backgroundDataList != null)
         {
             foreach (LoadSpriteData loadSpriteData in backgroundDataList)
@@ -331,7 +333,6 @@ public class LoadSpriteData
 
         } else { Debug.Log("The loadSprite that was supplied when creating this loadSpriteData was null"); }
 
-
     }
 
     public LoadSprite ConvertToLoadSprite()
@@ -368,9 +369,7 @@ public class LoadSpriteData
             }
         } else { Debug.Log("LoadTileDataReferenceList for Loadsprite called: " + Name + " was null and no tiles was added"); }
 
-
         return loadSprite;
-        //Sprite sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/" + SessionName + "/" + "Background" + "/background.jpg", typeof(Sprite));
 
     }
 
@@ -388,9 +387,8 @@ public class LoadTileData
     int Angle;
 
     bool isHealthBarShown;
-    int currentHealth;
-    int maxHealth;
-
+    public int currentHealth;
+    public int maxHealth;
 
     public LoadTileData(LoadTile loadTile)
     {
@@ -420,7 +418,6 @@ public class LoadTileData
     {
         LoadTile loadTile = new LoadTile();
 
-
         loadTile.pos.x = positionX;
         loadTile.pos.y = positionY;
 
@@ -431,10 +428,13 @@ public class LoadTileData
         loadTile.isHealthBarShown = isHealthBarShown;
         loadTile.Health = currentHealth;
         loadTile.MaxHealth = maxHealth;
-        
+
+        if (loadTile.Health != 0 || loadTile.MaxHealth != 0)
+        {
+            Debug.Log("Loading data from LoadTileData - isShowHealth " + loadTile.isHealthBarShown + ", CurrentHealth " + loadTile.Health + ", maxHealth " + loadTile.MaxHealth);
+        }
 
         return loadTile;
-        //Sprite sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/" + SessionName + "/" + "Background" + "/background.jpg", typeof(Sprite));
 
     }
 

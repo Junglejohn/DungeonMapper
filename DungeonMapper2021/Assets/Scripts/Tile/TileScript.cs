@@ -56,7 +56,6 @@ public class TileScript : MonoBehaviour {
                 if (currentLoadTile != null && currentLoadTile.loadSpriteInfo != null && currentLoadTile.loadSpriteInfo.sprite != null)
                 {
                     _xSpriteAspectRatio = currentLoadTile.loadSpriteInfo.sprite.texture.width / (float)currentLoadTile.loadSpriteInfo.sprite.texture.height;
-                    //Debug.Log("Loadtile name: " + currentLoadTile.loadSpriteInfo.Name+ "texture width: " + currentLoadTile.loadSpriteInfo.sprite.texture.width + ". texture height: "+ currentLoadTile.loadSpriteInfo.sprite.texture.height + ". Aspect: " + _xSpriteAspectRatio);
 
                     _aspectAssigned = true;
                     return XSpriteAspectRatio;
@@ -74,8 +73,6 @@ public class TileScript : MonoBehaviour {
         }
     }
 
-    int minSize = 40;
-    int maxSize = 1000;
     Vector2 _size = new Vector2(1,1);
     public Vector2 Size {
         get {
@@ -89,9 +86,7 @@ public class TileScript : MonoBehaviour {
         }
         set {
 
-            Vector2 clampedValue = new Vector2(Mathf.Clamp(value.x, minSize, maxSize * XSpriteAspectRatio), Mathf.Clamp(value.y, minSize, maxSize));
-
-            //Debug.Log("maxSizeX = " + maxSize * XSpriteAspectRatio + ". clampedValue.x = " + clampedValue.x);
+            Vector2 clampedValue = new Vector2(Mathf.Clamp(value.x, StaticVariables.tileMinSize, StaticVariables.tileMaxSize * XSpriteAspectRatio), Mathf.Clamp(value.y, StaticVariables.tileMinSize, StaticVariables.tileMaxSize));
 
             if (currentLoadTile != null)
             {
@@ -160,7 +155,7 @@ public class TileScript : MonoBehaviour {
     public Sprite sprite
     {
         get { return _sprite; }
-        set
+        private set
         {
             _sprite = value;
             if (image != null)
@@ -169,13 +164,12 @@ public class TileScript : MonoBehaviour {
             }
         }
     }
+
     public Image image;
 
     public Button MenuButton;
     public Button ScaleButton;
     public Button RotateButton;
-
-
 
     public GameObject MenuParent;
     public void SetTileLocalMenuOptionsActivation(bool isActive)
@@ -228,9 +222,9 @@ public class TileScript : MonoBehaviour {
             currentLoadTile.OnTileObjectsDeleted += DeleteTileObject;
 
             IsShowHealthBar = loadTile.isHealthBarShown;
-            MaxHealth = loadTile.MaxHealth;
             CurrentHealth = loadTile.Health;
-
+            MaxHealth = loadTile.MaxHealth;
+            
             OrderInLayer = loadTile.orderInLayer;
 
         } else
@@ -278,6 +272,8 @@ public class TileScript : MonoBehaviour {
 
         IsRunningEditing = true;
 
+        EventManager.IsEditingTile = true;
+
         setShowName(true);
 
         SetEditorButtonsActivation(true);
@@ -314,6 +310,8 @@ public class TileScript : MonoBehaviour {
         setShowName(false);
 
         SetEditorButtonsActivation(false);
+
+        EventManager.IsEditingTile = false;
 
         IsRunningEditing = false;
     }
@@ -419,8 +417,9 @@ public class TileScript : MonoBehaviour {
 
                     Size = new Vector2(
                     initialSize.x + (currentMousePos.x - initialMousePos.x) * Camera.main.aspect,
-                    initialSize.x + (currentMousePos.x - initialMousePos.x) * Camera.main.aspect * (sprite.rect.height / sprite.rect.width)
+                    initialSize.y + ((currentMousePos.x - initialMousePos.x) * Camera.main.aspect * (sprite.texture.height / sprite.texture.width))
                     );
+
                 } else
                 {
                     //Debug.Log("Scale, Free Aspect");
@@ -429,8 +428,6 @@ public class TileScript : MonoBehaviour {
                     initialSize.y - (currentMousePos.y - initialMousePos.y) * 2
                     );
                 }
-
-                
 
                 yield return null;
             }
@@ -628,10 +625,17 @@ public class TileScript : MonoBehaviour {
         set
         {
             _isShowSlider = value;
+
+            if (currentLoadTile != null)
+            {
+                currentLoadTile.isHealthBarShown = _isShowSlider;
+            }
+
             if (HealthBarSlider != null)
             {
                 HealthBarSlider.gameObject.SetActive(value);
             }
+            SetHealthBarSliderColor();
         }
     }
     public void ToggleShowHealthbar()
@@ -675,7 +679,13 @@ public class TileScript : MonoBehaviour {
         get { return _maxHealth; }
         set
         {
-            _maxHealth = value;
+            _maxHealth = value; 
+
+            if (currentLoadTile != null)
+            {
+                currentLoadTile.MaxHealth = _maxHealth;
+            }
+
             if (value < CurrentHealth)
             {
                 CurrentHealth = value;
@@ -689,10 +699,13 @@ public class TileScript : MonoBehaviour {
                 HealthBarSlider.maxValue = value;
             }
 
+            //UpdateHealthbarSlider();
+
             AssignInputFieldValue(maxHealthInputField, value);
             SetHealthBarSliderColor();
         }
     }
+
     public TMP_InputField maxHealthInputField;
     public void OnMaxHealthInputFieldEndEdit()
     {
@@ -715,7 +728,13 @@ public class TileScript : MonoBehaviour {
         get { return _currentHealth; }
         set
         {
-            _currentHealth = value;
+            _currentHealth = value; 
+
+            if (currentLoadTile != null)
+            {
+                currentLoadTile.Health = _currentHealth;
+            }
+
             if (HealthBarSlider != null)
             {
                 HealthBarSlider.value = Mathf.Clamp(value, 0, MaxHealth);
@@ -725,7 +744,7 @@ public class TileScript : MonoBehaviour {
             SetHealthBarSliderColor();
         }
     }
-    //public InputField currentHealthInputField;
+    
     public TMP_InputField currentHealthInputField;
 
     public void OncurrentHealthInputFieldEndEdit()
@@ -803,10 +822,7 @@ public class TileScript : MonoBehaviour {
         isShowFrame = !isShowFrame;
     }
 
-
-
-
-    //Order of tiles (needs rework)
+    //Order of tiles
     public int OrderInLayer
     {
         get { return transform.GetSiblingIndex(); }
@@ -830,7 +846,6 @@ public class TileScript : MonoBehaviour {
 
     //Help Text
     public HelpTextArray currentHelpTextArray;
-
 
     public void ShowHelpText(int index)
     {

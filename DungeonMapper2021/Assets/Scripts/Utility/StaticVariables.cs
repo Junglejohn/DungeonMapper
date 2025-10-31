@@ -41,14 +41,6 @@ public static class StaticVariables {
 
             AreaSize = _currentSession.AreaSize;
 
-
-            /*
-            if (EventManager.OnRefreshSession != null)
-            {
-                EventManager.OnRefreshSession.Invoke(_currentSession);
-            }
-            */
-
             if (EventManager.OnSessionRefresh != null)
             {
                 EventManager.OnSessionRefresh.Invoke(_currentSession);
@@ -68,14 +60,20 @@ public static class StaticVariables {
             }
         } set {
 
-            if (currentSession != null)
+            if (currentSession == null)
             {
-                currentSession.Name = _defaultSessionName;
-            }
+                Debug.LogError("StaticVariables - currentSessionName.Set - could not set name of currentSession it is null");
+            } else
+            {
+                if (Session.isNameValid(value))
+                {
+                    currentSession.Name = value;
 
-            if (EventManager.OnSessionNameUpdate != null)
-            {
-                EventManager.OnSessionNameUpdate.Invoke(value);
+                    if (EventManager.OnSessionNameUpdate != null)
+                    {
+                        EventManager.OnSessionNameUpdate.Invoke(value);
+                    }
+                }
             }
         } 
     }
@@ -84,14 +82,14 @@ public static class StaticVariables {
 
     #region BoardArea
 
-    public const int defaultAreaWidth = 2500;
-    public const int defaultAreaHeight = 1000;
+    public const int defaultAreaWidth = 5000;
+    public const int defaultAreaHeight = 2000;
 
-    public const int minAreaHeight = 500;
+    public const int minAreaHeight = 750;
     public const int minAreaWidth = 1500;
 
-    public const int maxAreaHeight = 5000;
-    public const int maxAreaWidth = 5000;
+    public const int maxAreaHeight = 7000;
+    public const int maxAreaWidth = 7000;
 
     public static int clampedAreaWidth(int currentWidth)
     {
@@ -111,7 +109,7 @@ public static class StaticVariables {
                 );
     }
 
-    private static Vector2 _areaSize = new Vector2(2500, 1000);
+    private static Vector2 _areaSize = new Vector2(5000, 2000);
     public static Vector2 AreaSize { get {
             if (currentSession != null)
             {
@@ -153,6 +151,15 @@ public static class StaticVariables {
     
 
     public static int borderSize = 100;
+
+    #endregion
+
+    #region tiles
+
+    public static readonly int tileMaxSize = 7000;
+    public static readonly int tileMinSize = 40;
+
+
 
     #endregion
 

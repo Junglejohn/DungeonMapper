@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
-public class TileMenuCanvasScript : MonoBehaviour {
+public class TileMenuCanvasScript : CanvasScript {
 
 	public void Exit(bool IsSaveOnExit)
     {

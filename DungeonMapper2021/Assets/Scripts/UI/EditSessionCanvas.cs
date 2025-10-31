@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EditSessionCanvas : MonoBehaviour {
+public class EditSessionCanvas : CanvasScript {
 
     public CanvasActivation canvasActivation;
     public int returnCanvasIndex;
@@ -11,6 +11,31 @@ public class EditSessionCanvas : MonoBehaviour {
     public UISessionNameInputField nameInput;
 
     public UIAreaSizeInputFields AreaSizeInput;
+
+    protected override void O_ShowCanvas()
+    {
+        base.O_ShowCanvas();
+        
+        {
+            if (nameInput != null && nameInput.nameInputField != null)
+            {
+                nameInput.nameInputField.text = StaticVariables.currentSessionName;
+            }
+
+            if (AreaSizeInput != null && AreaSizeInput.XSizeInput != null)
+            {
+                AreaSizeInput.XSizeInput.text = StaticVariables.AreaWidth.ToString();
+            }
+
+            if (AreaSizeInput != null && AreaSizeInput.YSizeInput != null)
+            {
+                AreaSizeInput.YSizeInput.text = StaticVariables.AreaHeight.ToString();
+            }
+
+        }
+
+    }
+
 
 
     public void CreateSession()
@@ -55,6 +80,8 @@ public class EditSessionCanvas : MonoBehaviour {
         AssignCurrentAreaSize();
         AssignCurrentSessionName();
 
+        Debug.Log("AssignSessionChanges - new name: [" + StaticVariables.currentSession.Name + "] new areasize: [" + StaticVariables.currentSession.AreaSize + "]");
+
         if (EventManager.OnSessionRefresh != null && StaticVariables.currentSession != null)
         {
             EventManager.OnSessionRefresh.Invoke(StaticVariables.currentSession);
@@ -72,7 +99,13 @@ public class EditSessionCanvas : MonoBehaviour {
     public void AssignCurrentSessionName()
     {
         //changing StaticVariables.currentSessionName automatically invokes the EventManager.OnNameChanged
-        StaticVariables.currentSessionName = nameInput.GetNameFromInputField();
+        if (nameInput != null && nameInput.nameInputField != null)
+        {
+            StaticVariables.currentSessionName = nameInput.nameInputField.text;
+            Debug.Log("Name was assigned as " + StaticVariables.currentSessionName);
+        }
+
+        //StaticVariables.currentSessionName = nameInput.GetNameFromInputField();
 
     }
 

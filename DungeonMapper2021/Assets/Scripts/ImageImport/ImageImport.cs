@@ -4,7 +4,7 @@ using System.Linq;
 using B83.Win32;
 using UnityEngine.UI;
 
-public class ImageImport : MonoBehaviour
+public class ImageImport : CanvasScript
 {
     Texture2D texture = null;
     DropInfo dropInfo = null;

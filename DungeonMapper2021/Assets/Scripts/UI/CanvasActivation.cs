@@ -44,6 +44,36 @@ public class CanvasActivation : MonoBehaviour {
 [System.Serializable]
 public class CanvasGroup
 {
+    public CanvasScript[] canvasArray;
+
+    public void SetCanvasGroupActivation(bool IsActivate)
+    {
+        if (canvasArray != null)
+        {
+            for (int i = 0; i < canvasArray.Length; i++)
+            {
+                if (canvasArray[i] == null)
+                {
+                    continue;
+                }
+
+                if (IsActivate)
+                {
+                    canvasArray[i].ShowCanvas();
+                }
+                else
+                {
+                    canvasArray[i].HideCanvas();
+                }
+            }
+        }
+    }
+}
+
+/*
+[System.Serializable]
+public class CanvasGroup
+{
     public Canvas[] canvasArray;
 
     public void SetCanvasGroupActivation(bool IsActivate)
@@ -60,3 +90,4 @@ public class CanvasGroup
         }
     }
 }
+*/

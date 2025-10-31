@@ -58,7 +58,7 @@ public class Session {
 
     private const string SaveFileTypeName = ".troll";
 
-    public string SessionFolderDataPath
+    public static string SessionFolderDataPath
     {
         get
         {
@@ -273,11 +273,6 @@ public class Session {
             
         }
 
-        
-
-        
-        
-
     }
 
     public void DeleteSession()
@@ -306,10 +301,8 @@ public class Session {
     public void Save(Texture2D texture)
     {
 
-
         System.IO.File.WriteAllBytes(Application.persistentDataPath + "/Session", texture.EncodeToPNG());
         Debug.Log("Saved file to: " + Application.persistentDataPath + "/Session");
-
 
     }
 
@@ -334,6 +327,7 @@ public class FogOfWar{
     
     public Vector2 size;
     public Sprite sprite;
+
 }
 
 [System.Serializable]
@@ -396,6 +390,7 @@ public class LoadSprite
             return false;
         }
     }
+
 }
 
 [System.Serializable]
@@ -416,20 +411,17 @@ public class LoadTile
             return _size;
         }
         set {
-            _size = new Vector2(Mathf.Clamp(value.x, 40, 5000), Mathf.Clamp(value.y, 40, 5000));
-
+            _size = value;
         }
 
     }
 
     public int orderInLayer;
 
-
     public int Angle;
 
     public bool isHealthBarShown;
     public int MaxHealth = 100;
     public int Health = 100;
-
 
 }

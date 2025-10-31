@@ -37,7 +37,7 @@ public class FogOfWarCanvas : MonoBehaviour {
 
     public bool AllowFogOfWarEditing()
     {
-        if (IsShowFog && EventManager.IsCanvasControllable)
+        if (IsShowFog && EventManager.IsCanvasControllable && !EventManager.IsEditingTile)
         {
             return true;
         } else
@@ -205,6 +205,8 @@ public class FogOfWarCanvas : MonoBehaviour {
 
     }
 
+
+    private int editMouseButtonIndex = 2;
     bool editFogIsRunning = false;
     IEnumerator EditFogCoroutine()
     {
@@ -218,50 +220,56 @@ public class FogOfWarCanvas : MonoBehaviour {
         while (IsShowFog)
         {
             //Debug.Log("fog can be edited");
-
-            if (AllowFogOfWarEditing() && Input.GetMouseButton(1))
+            if (Input.GetMouseButtonDown(editMouseButtonIndex))
             {
-                Texture2D tex = sprite.texture;
-
-                Rect r = fogImage.rectTransform.rect;
-
-                Vector2 localPoint;
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(fogImage.rectTransform, Input.mousePosition, cam, out localPoint);
-
-         
-                int px = Mathf.Clamp((int)(((localPoint.x - r.x) * tex.width) / r.width), 0, tex.width);
-                int py = Mathf.Clamp((int)(((localPoint.y - r.y) * tex.height) / r.height), 0, tex.height);
-
-                //coordinates on fog of war texture to start and end looping. Clamped because coordinates below zero and higher than fogTexture.width causes unwanted behavior.
-                int clampedStartPointX = Mathf.Clamp(px - StaticVariables.Preferences.BrushSize, 0, tex.width);
-                int clampedEndPointX = Mathf.Clamp(px + StaticVariables.Preferences.BrushSize, 0, tex.width);
-
-                int clampedStartPointY = Mathf.Clamp(py - StaticVariables.Preferences.BrushSize, 0, tex.height);
-                int clampedEndPointY = Mathf.Clamp(py + StaticVariables.Preferences.BrushSize, 0, tex.height);
-
-
-                for (int y = clampedStartPointY; y < clampedEndPointY; y++)
+                while (IsShowFog && AllowFogOfWarEditing() && Input.GetMouseButton(editMouseButtonIndex))
                 {
-                    for (int x = clampedStartPointX; x < clampedEndPointX; x++)
+
+                    Texture2D tex = sprite.texture;
+
+                    Rect r = fogImage.rectTransform.rect;
+
+                    Vector2 localPoint;
+                    RectTransformUtility.ScreenPointToLocalPointInRectangle(fogImage.rectTransform, Input.mousePosition, cam, out localPoint);
+
+
+                    int px = Mathf.Clamp((int)(((localPoint.x - r.x) * tex.width) / r.width), 0, tex.width);
+                    int py = Mathf.Clamp((int)(((localPoint.y - r.y) * tex.height) / r.height), 0, tex.height);
+
+                    //coordinates on fog of war texture to start and end looping. Clamped because coordinates below zero and higher than fogTexture.width causes unwanted behavior.
+                    int clampedStartPointX = Mathf.Clamp(px - StaticVariables.Preferences.BrushSize, 0, tex.width);
+                    int clampedEndPointX = Mathf.Clamp(px + StaticVariables.Preferences.BrushSize, 0, tex.width);
+
+                    int clampedStartPointY = Mathf.Clamp(py - StaticVariables.Preferences.BrushSize, 0, tex.height);
+                    int clampedEndPointY = Mathf.Clamp(py + StaticVariables.Preferences.BrushSize, 0, tex.height);
+
+
+                    for (int y = clampedStartPointY; y < clampedEndPointY; y++)
                     {
-                        if (brushTexturePixel(StaticVariables.Preferences.BrushSize * 2, x + StaticVariables.Preferences.BrushSize - px, y + StaticVariables.Preferences.BrushSize - py))
+                        for (int x = clampedStartPointX; x < clampedEndPointX; x++)
                         {
-                            tex.SetPixel(x, y, currentColor);
+                            if (brushTexturePixel(StaticVariables.Preferences.BrushSize * 2, x + StaticVariables.Preferences.BrushSize - px, y + StaticVariables.Preferences.BrushSize - py))
+                            {
+                                tex.SetPixel(x, y, currentColor);
+                            }
+
+
                         }
 
-                        
                     }
 
+                    tex.Apply();
+
+                    if (OnFogValueChanged != null)
+                    {
+                        OnFogValueChanged.Invoke(this);
+                    }
+
+                    //Color32 col = tex.GetPixel(px, py);
+
+
+                    yield return null;
                 }
-
-                tex.Apply();
-
-                if (OnFogValueChanged != null)
-                {
-                    OnFogValueChanged.Invoke(this);
-                }
-
-                //Color32 col = tex.GetPixel(px, py);
             }
 
 

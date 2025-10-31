@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class tileCanvasScript : MonoBehaviour {
+public class tileCanvasScript : CanvasScript {
 
     public TileScript tilePrefab;
 

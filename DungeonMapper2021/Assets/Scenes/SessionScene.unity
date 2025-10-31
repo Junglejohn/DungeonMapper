@@ -3798,8 +3798,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 519420031}
   camMinSize: 50
-  _camMaxSize: 1250
-  ScrollSpeed: 10
+  _camMaxSize: 3000
+  ScrollSpeed: 15
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -5455,6 +5455,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bbef5d9b74adb84eabeca2bb1b73af7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _currentCanvas: {fileID: 0}
   tilePrefab: {fileID: 114359141259094808, guid: 9d98a1fd03372e545be1defed58734f8,
     type: 3}
   ForegroundTileParent: {fileID: 1322596395}
@@ -7177,6 +7178,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e13b26246b1386f43bbb34bdba6a96aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _currentCanvas: {fileID: 946608661}
   tileCreatorPrefab: {fileID: 114140029577299224, guid: 291a6c904b97063449d29b7a77f9b94c,
     type: 3}
   TileCreatorParent: {fileID: 750354204}
@@ -8881,13 +8883,13 @@ MonoBehaviour:
   activeCanvasIndex: 0
   canvasGroupArray:
   - canvasArray:
-    - {fileID: 946608661}
+    - {fileID: 946608663}
   - canvasArray:
-    - {fileID: 1361611698}
+    - {fileID: 1361611695}
   - canvasArray:
-    - {fileID: 1697297396}
+    - {fileID: 1697297397}
   - canvasArray:
-    - {fileID: 2194057596903317256}
+    - {fileID: 2194057596903317263}
 --- !u!114 &1205812970
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9632,6 +9634,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e5a9e7a0dd968d4dba31666eedc226f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _currentCanvas: {fileID: 1361611698}
   dropRectImage: {fileID: 458161824}
   namingInputField: {fileID: 1665597275}
   AddTileButton: {fileID: 1844988776}
@@ -11212,6 +11215,7 @@ GameObject:
   - component: {fileID: 1697297396}
   - component: {fileID: 1697297395}
   - component: {fileID: 1697297394}
+  - component: {fileID: 1697297397}
   m_Layer: 5
   m_Name: MenuCanvas
   m_TagString: Untagged
@@ -11311,6 +11315,19 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 10
   m_TargetDisplay: 0
+--- !u!114 &1697297397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1697297392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 695b07dab4d7caa4a9f99804a7822a5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currentCanvas: {fileID: 1697297396}
 --- !u!1 &1699142904
 GameObject:
   m_ObjectHideFlags: 0
@@ -14615,7 +14632,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 434caa09f397ec141bca736e8504f796, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvasActivation: {fileID: 0}
+  _currentCanvas: {fileID: 2194057596903317256}
+  canvasActivation: {fileID: 1205812969}
   returnCanvasIndex: 0
   nameInput: {fileID: 2194057597212802664}
   AreaSizeInput: {fileID: 2194057597663505194}
@@ -16612,6 +16630,35 @@ PrefabInstance:
     - target: {fileID: 1656703846821094, guid: 9d98a1fd03372e545be1defed58734f8, type: 3}
       propertyPath: m_Name
       value: Tile
+      objectReference: {fileID: 0}
+    - target: {fileID: 1656703846821094, guid: 9d98a1fd03372e545be1defed58734f8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224861169771701294, guid: 9d98a1fd03372e545be1defed58734f8,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224861169771701294, guid: 9d98a1fd03372e545be1defed58734f8,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224865740507853846, guid: 9d98a1fd03372e545be1defed58734f8,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224865740507853846, guid: 9d98a1fd03372e545be1defed58734f8,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224865740507853846, guid: 9d98a1fd03372e545be1defed58734f8,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224921370942582248, guid: 9d98a1fd03372e545be1defed58734f8,
         type: 3}
